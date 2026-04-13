@@ -9,13 +9,21 @@ export default function Drivers({ suspensionsOnly = false }) {
         fetch('http://localhost:5000/api/admin/drivers')
            .then(res => res.json())
            .then(data => {
-               if (suspensionsOnly) {
-                   setDrivers(data.filter(d => !d.isActive));
+               if (Array.isArray(data)) {
+                   if (suspensionsOnly) {
+                       setDrivers(data.filter(d => !d.isActive));
+                   } else {
+                       setDrivers(data);
+                   }
                } else {
-                   setDrivers(data);
+                   console.error("Expected array from /api/admin/drivers but got:", data);
+                   setDrivers([]); // Fallback to empty array to avoid .map crash
                }
            })
-           .catch(console.error);
+           .catch(err => {
+               console.error(err);
+               setDrivers([]);
+           });
     };
 
     useEffect(() => {
