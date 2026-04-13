@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 
 // Load env vars
 dotenv.config();
+require('./firebaseAdmin'); // Initialize Firebase Admin SDK globally
 
 // Connect to database
 connectDB();
