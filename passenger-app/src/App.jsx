@@ -8,6 +8,9 @@ import History from './components/History';
 import { auth, onAuthStateChanged, signOut } from './firebaseConfig';
 
 function App() {
+  //change1
+  const [pickupText, setPickupText] = useState('');
+const [dropoffText, setDropoffText] = useState('');
   const { isConnected, socket } = useSocket();
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
@@ -27,7 +30,14 @@ function App() {
     });
     return unsubscribe;
   }, []);
+  //change2
+  useEffect(() => {
+  if (pickup) setPickupText("Pickup selected on map");
+}, [pickup]);
 
+useEffect(() => {
+  if (dropoff) setDropoffText("Destination selected on map");
+}, [dropoff]);
   // Registering socket listeners once
   useEffect(() => {
      if (!socket) return;
@@ -55,7 +65,7 @@ function App() {
      });
      return () => socket.off('RIDE_STATUS_UPDATED');
   }, [socket]);
-
+  
   const requestRide = async () => {
     if (!pickup || !dropoff) return alert("Select pickup and dropoff on the map!");
     setRideStatus('REQUESTING');
@@ -99,7 +109,14 @@ function App() {
         setRideStatus('IDLE');
     }
   };
-
+  //change3
+ const searchLocation = async (query) => {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
+  );
+  const data = await res.json();
+  return data[0];
+};
   const submitRating = async () => {
       try {
           await fetch(`http://localhost:5000/api/rides/${activeRide._id}/rating`, {
@@ -191,7 +208,26 @@ function App() {
               onClick={() => setSelectingMode('pickup')}
             >
               <MapPin size={20} color="var(--primary)" />
-              <input readOnly type="text" placeholder={pickup ? "Pickup selected" : "Tap map for Pickup"} />
+              {/* change4 */}
+              <input
+  type="text"
+  placeholder="Enter Pickup or tap map"
+  value={pickupText}
+  onChange={(e) => setPickupText(e.target.value)}
+  onKeyDown={async (e) => {
+    if (e.key === "Enter") {
+      const place = await searchLocation(pickupText);
+      if (place) {
+        setPickup({
+          lat: parseFloat(place.lat),
+          lng: parseFloat(place.lon)
+        });
+        setPickupText(place.display_name);
+      }
+    }
+  }}
+/>
+
             </div>
             
             <div 
@@ -200,7 +236,25 @@ function App() {
               onClick={() => setSelectingMode('dropoff')}
             >
               <Navigation size={20} color="#ff4757" />
-              <input readOnly type="text" placeholder={dropoff ? "Destination selected" : "Tap map for Destination"} />
+               {/* change5 */}
+              <input
+  type="text"
+  placeholder="Enter Destination or tap map"
+  value={dropoffText}
+  onChange={(e) => setDropoffText(e.target.value)}
+  onKeyDown={async (e) => {
+    if (e.key === "Enter") {
+      const place = await searchLocation(dropoffText);
+      if (place) {
+        setDropoff({
+          lat: parseFloat(place.lat),
+          lng: parseFloat(place.lon)
+        });
+        setDropoffText(place.display_name);
+      }
+    }
+  }}
+/>
             </div>
 
             <button className="btn-primary" style={{ marginTop: '16px' }} onClick={requestRide}>
