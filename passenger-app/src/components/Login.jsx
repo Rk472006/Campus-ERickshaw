@@ -12,6 +12,12 @@ export default function Login({ onAuthSuccess }) {
   const handleAuth = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Restrict to @iitism.ac.in domain
+    if (!email.toLowerCase().endsWith('@iitism.ac.in')) {
+      return setError("Access restricted. Please use your @iitism.ac.in campus email.");
+    }
+
     try {
       let creds;
       if (isRegistering) {
@@ -70,7 +76,7 @@ export default function Login({ onAuthSuccess }) {
           <div className="input-group">
             <input  
               type="email" 
-              placeholder="Campus Email" 
+              placeholder="Campus Email (@iitism.ac.in)" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 
