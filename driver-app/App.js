@@ -5,8 +5,9 @@ import * as Location from 'expo-location';
 import { SocketProvider, useSocket } from './src/SocketContext';
 import Login from './src/Login';
 import Profile from './src/Profile';
+import History from './src/History';
 import { auth, onAuthStateChanged, signOut } from './firebaseConfig';
-import { User as UserIcon } from 'lucide-react-native';
+import { User as UserIcon, Clock, LogOut } from 'lucide-react-native';
 
 function DriverDashboard({ user }) {
   const { socket, isConnected } = useSocket();
@@ -18,6 +19,7 @@ function DriverDashboard({ user }) {
   const [driverState, setDriverState] = useState('IDLE');
   const [routePolyline, setRoutePolyline] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -46,7 +48,6 @@ function DriverDashboard({ user }) {
     };
     socket.on('SUSPENDED_ERROR', handleSuspended);
     
-    // Explicitly define handleNewRide to be clean
     const handleNewRide = (ride) => {
       if (isOnline && !activeRide) {
         setRideRequest(ride);
@@ -62,7 +63,6 @@ function DriverDashboard({ user }) {
     
     socket.on('NEW_RIDE_REQUEST', handleNewRide);
 
-    // Listen for cancellations
     const handleStatusUpdate = (update) => {
         if (update.ride && update.ride.status === 'CANCELLED') {
              setActiveRide((currentActive) => {
@@ -96,7 +96,6 @@ function DriverDashboard({ user }) {
   useEffect(() => {
     let interval;
     if (isOnline && socket && location) {
-      // Announce we are online
       socket.emit('DRIVER_ONLINE', { driverId: user.uid });
       
       interval = setInterval(() => {
@@ -206,18 +205,21 @@ function DriverDashboard({ user }) {
       {/* Header bar */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerText}>Driver Status: {isConnected ? 'Connected' : 'Offline'}</Text>
-          <View style={{ flexDirection: 'row', gap: 15 }}>
+          <Text style={styles.headerText}>Terminal: {isConnected ? 'Live' : 'Offline'}</Text>
+          <View style={{ flexDirection: 'row', gap: 18, marginTop: 6, alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => setShowHistory(true)}>
+              <Clock color="#94a3b8" size={18} />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => setShowProfile(true)}>
-              <Text style={{ color: '#00df82', marginTop: 4 }}>Profile</Text>
+              <UserIcon color="#94a3b8" size={18} />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout}>
-              <Text style={{ color: '#ff4757', marginTop: 4 }}>Logout</Text>
+              <LogOut color="#ff4757" size={18} />
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.toggleContainer}>
-          <Text style={{ marginRight: 10, color: '#fff', fontWeight: 'bold' }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</Text>
+          <Text style={{ marginRight: 10, color: '#fff', fontWeight: 'bold', fontSize: 12 }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</Text>
           <Switch
             value={isOnline}
             onValueChange={toggleOnline}
@@ -228,6 +230,7 @@ function DriverDashboard({ user }) {
       </View>
 
       {showProfile && <Profile user={user} onClose={() => setShowProfile(false)} />}
+      {showHistory && <History user={user} onClose={() => setShowHistory(false)} />}
 
       {/* Map Segment */}
       {location ? (

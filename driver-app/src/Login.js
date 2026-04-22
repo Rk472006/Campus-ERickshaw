@@ -4,6 +4,7 @@ import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from
 
 export default function Login({ onAuthSuccess }) {
   const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -11,8 +12,22 @@ export default function Login({ onAuthSuccess }) {
   const handleAuth = async () => {
     setError('');
     try {
+      let creds;
       if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        if (!name) return setError("Please provide your full name");
+        creds = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Sync to MongoDB (using 10.0.2.2 for Android emulator)
+        await fetch('http://10.0.2.2:5000/api/user/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                firebaseUid: creds.user.uid,
+                email: creds.user.email,
+                name: name,
+                role: 'DRIVER'
+            })
+        });
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
@@ -28,11 +43,21 @@ export default function Login({ onAuthSuccess }) {
       style={styles.container}
     >
       <View style={styles.card}>
-        <Text style={styles.title}>Driver Portal</Text>
+        <Text style={styles.title}>Driver Portal Mobile</Text>
         <Text style={styles.subtitle}>Sign in to accept campus rides</Text>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
+        {isRegistering && (
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#94a3b8"
+            value={name}
+            onChangeText={setName}
+          />
+        )}
+        
         <TextInput
           style={styles.input}
           placeholder="Driver Email"
@@ -58,7 +83,7 @@ export default function Login({ onAuthSuccess }) {
 
         <TouchableOpacity onPress={() => setIsRegistering(!isRegistering)}>
           <Text style={styles.switchText}>
-            {isRegistering ? 'Already have an account? Sign In' : "Don't have an account? Register"}
+            {isRegistering ? 'Already have an account? Sign In' : "Don't have an account? Register Here"}
           </Text>
         </TouchableOpacity>
       </View>
