@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import History from './components/History';
 import { auth, onAuthStateChanged, signOut } from './firebaseConfig';
+import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
   //change1
@@ -55,7 +56,7 @@ useEffect(() => {
             // En route to destination
          }
          if(data.ride && data.ride.status === 'CANCELLED') {
-             alert('Ride was cancelled.');
+             toast.error('Ride was cancelled.');
              setRideStatus('IDLE');
              setPickup(null); setDropoff(null); setActiveRide(null); setAssignedDriver(null);
          }
@@ -67,7 +68,7 @@ useEffect(() => {
   }, [socket]);
   
   const requestRide = async () => {
-    if (!pickup || !dropoff) return alert("Select pickup and dropoff on the map!");
+    if (!pickup || !dropoff) return toast.error("Select pickup and dropoff on the map!");
     setRideStatus('REQUESTING');
     
     try {
@@ -96,7 +97,7 @@ useEffect(() => {
                 if (currentStatus === 'REQUESTING') {
                     // Auto-cancel if still requesting after 3 mins
                     cancelRideFlow(ride._id);
-                    alert("No drivers are currently available. Please try again later.");
+                    toast.error("No drivers are currently available. Please try again later.");
                     return 'IDLE';
                 }
                 return currentStatus;
@@ -105,7 +106,7 @@ useEffect(() => {
 
     } catch(err) {
         console.error(err);
-        alert("Failed to request ride");
+        toast.error("Failed to request ride");
         setRideStatus('IDLE');
     }
   };
@@ -129,7 +130,7 @@ useEffect(() => {
           setDropoff(null);
           setActiveRide(null);
           setAssignedDriver(null);
-          alert('Thanks for your feedback!');
+          toast.success('Thanks for your feedback!');
       } catch(err) { console.error(err); }
   };
 
@@ -166,6 +167,7 @@ useEffect(() => {
 
   return (
     <div className="app-container">
+      <Toaster position="top-center" toastOptions={{ style: { background: '#333', color: '#fff' } }} />
       {view === 'profile' && <Profile user={user} onClose={() => setView('map')} />}
       {view === 'history' && <History user={user} onClose={() => setView('map')} />}
       

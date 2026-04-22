@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function Drivers({ suspensionsOnly = false }) {
     const [drivers, setDrivers] = useState([]);
@@ -54,7 +55,7 @@ export default function Drivers({ suspensionsOnly = false }) {
                 body: JSON.stringify(formData)
             });
             if (res.ok) {
-                alert("Driver successfully registered!");
+                toast.success("Driver successfully registered!");
                 setShowForm(false);
                 setFormData({ 
                     name: '', 
@@ -69,7 +70,7 @@ export default function Drivers({ suspensionsOnly = false }) {
                 fetchDrivers();
             } else {
                 const data = await res.json();
-                alert("Error: " + data.error);
+                toast.error("Error: " + data.error);
             }
         } catch(err) {
             console.error(err);

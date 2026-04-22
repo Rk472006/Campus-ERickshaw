@@ -72,13 +72,38 @@ export default function AppMap({ pickup, setPickup, dropoff, setDropoff, selecti
     // Listen to real-time driver locations
     useEffect(() => {
         if (!socket) return;
+        
+        // Fetch initially online drivers
+        socket.emit('GET_ACTIVE_DRIVERS');
+        
+        socket.on('ACTIVE_DRIVERS_LIST', (list) => {
+            const driversObj = {};
+            list.forEach(d => {
+                driversObj[d.driverId] = [d.lat, d.lng];
+            });
+            setDrivers(prev => ({ ...prev, ...driversObj }));
+        });
+
         socket.on('DRIVER_LOCATION_UPDATE', (data) => {
             setDrivers(prev => ({
                 ...prev,
                 [data.driverId]: data.location // { lat, lng }
             }));
         });
-        return () => socket.off('DRIVER_LOCATION_UPDATE');
+        
+        socket.on('DRIVER_OFFLINE', (data) => {
+            setDrivers(prev => {
+                const newDrivers = { ...prev };
+                delete newDrivers[data.driverId];
+                return newDrivers;
+            });
+        });
+
+        return () => {
+            socket.off('ACTIVE_DRIVERS_LIST');
+            socket.off('DRIVER_LOCATION_UPDATE');
+            socket.off('DRIVER_OFFLINE');
+        };
     }, [socket]);
 
     const [route, setRoute] = useState([]);

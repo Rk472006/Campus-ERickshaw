@@ -7,6 +7,7 @@ import History from './components/History';
 import { auth, onAuthStateChanged, signOut } from './firebaseConfig';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
+import toast, { Toaster } from 'react-hot-toast';
 
 const rickshawIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
@@ -70,7 +71,7 @@ function App() {
     
     // Explicit suspension disconnect hook
     const handleSuspended = (data) => {
-       alert(data.message || 'Your account is suspended.');
+       toast.error(data.message || 'Your account is suspended.', { duration: 5000, icon: '🛑' });
        setIsOnline(false);
     };
     socket.on('SUSPENDED_ERROR', handleSuspended);
@@ -98,7 +99,7 @@ function App() {
         if (update.ride && update.ride.status === 'CANCELLED') {
              setActiveRide((currentActive) => {
                  if (currentActive && currentActive._id === update.ride._id) {
-                     alert("Passenger cancelled the ride.");
+                     toast.error("Passenger cancelled the ride.");
                      setDriverState('IDLE');
                      setRoutePolyline([]);
                      return null;
@@ -166,7 +167,7 @@ function App() {
              setActivePassenger(null);
              setDriverState('IDLE');
              setRoutePolyline([]);
-             alert("Ride marked as Completed! Good Job.");
+             toast.success("Ride marked as Completed! Good Job.");
          }
      } catch (err) {
          console.error(err);
@@ -193,7 +194,7 @@ function App() {
         setRideRequest(null);
     } catch(err) {
         console.error(err);
-        alert(err.message || "Failed to accept ride.");
+        toast.error(err.message || "Failed to accept ride.");
         setRideRequest(null);
     }
   };
@@ -215,6 +216,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <Toaster position="top-center" toastOptions={{ style: { background: '#333', color: '#fff' } }} />
       {view === 'profile' && <Profile user={user} onClose={() => setView('map')} />}
       {view === 'history' && <History user={user} onClose={() => setView('map')} />}
 

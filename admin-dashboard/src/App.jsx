@@ -5,6 +5,7 @@ import Layout from './Layout';
 import DashboardMap from './DashboardMap';
 import Analytics from './Analytics';
 import Drivers from './Drivers';
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const [socket, setSocket] = useState(null);
@@ -30,6 +31,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <Toaster position="top-center" toastOptions={{ style: { background: '#333', color: '#fff' } }} />
       <Routes>
         {/* Pass socket context via Layout state */}
         <Route path="/" element={<Layout isConnected={isConnected} drivers={drivers} />}>

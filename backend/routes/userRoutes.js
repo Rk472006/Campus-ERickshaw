@@ -6,7 +6,7 @@ const User = require('../models/User');
 // Sync Firebase user creation to MongoDB. Called immediately after a user registers on frontend.
 router.post('/sync', async (req, res) => {
   try {
-    const { firebaseUid, email, name, role } = req.body;
+    const { firebaseUid, email, name, role, dob, vehicleNumber, licenseId, address, phone } = req.body;
     
     // Check if exists
     let user = await User.findOne({ firebaseUid });
@@ -17,7 +17,12 @@ router.post('/sync', async (req, res) => {
          email,
          name,
          role: role || 'PASSENGER',
-         isActive: true
+         isActive: true,
+         dob,
+         vehicleNumber,
+         licenseId,
+         address,
+         phone
        });
     }
     

@@ -58,6 +58,11 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
   
+  socket.on('GET_ACTIVE_DRIVERS', () => {
+    const driversList = Object.values(activeDrivers).filter(d => d.lat && d.lng);
+    socket.emit('ACTIVE_DRIVERS_LIST', driversList);
+  });
+  
   socket.on('DRIVER_ONLINE', async (data) => {
     socket.join('drivers');
     try {
@@ -112,6 +117,10 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`Client disconnected: ${socket.id}`);
+    const driverData = activeDrivers[socket.id];
+    if (driverData && driverData.driverId) {
+        io.emit('DRIVER_OFFLINE', { driverId: driverData.driverId });
+    }
     delete activeDrivers[socket.id];
   });
 });

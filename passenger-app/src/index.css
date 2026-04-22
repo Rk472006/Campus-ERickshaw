@@ -182,3 +182,25 @@ body {
 .brand-icon {
   color: var(--primary);
 }
+
+.btn-decline {
+  background: rgba(255, 71, 87, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.btn-decline:hover {
+  background: rgba(255, 71, 87, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-decline:active {
+  transform: translateY(0);
+}

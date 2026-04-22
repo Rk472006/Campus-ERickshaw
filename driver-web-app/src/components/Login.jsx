@@ -8,6 +8,13 @@ export default function Login({ onAuthSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  
+  // Extra fields for registration
+  const [dob, setDob] = useState('');
+  const [phone, setPhone] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState('');
+  const [licenseId, setLicenseId] = useState('');
+  const [address, setAddress] = useState('');
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -26,7 +33,12 @@ export default function Login({ onAuthSuccess }) {
                 firebaseUid: creds.user.uid,
                 email: creds.user.email,
                 name: name,
-                role: 'DRIVER'
+                role: 'DRIVER',
+                dob,
+                phone,
+                vehicleNumber,
+                licenseId,
+                address
             })
         });
 
@@ -57,15 +69,36 @@ export default function Login({ onAuthSuccess }) {
 
         <form onSubmit={handleAuth}>
           {isRegistering && (
-             <div className="input-group">
-                <input 
-                  type="text" 
-                  placeholder="Full Name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  required 
-                />
-             </div>
+             <>
+                 <div className="input-group">
+                    <input 
+                      type="text" 
+                      placeholder="Full Name" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      required 
+                    />
+                 </div>
+                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                       <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} required />
+                    </div>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                       <input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                    </div>
+                 </div>
+                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                       <input type="text" placeholder="Vehicle No." value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required />
+                    </div>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                       <input type="text" placeholder="License ID" value={licenseId} onChange={(e) => setLicenseId(e.target.value)} required />
+                    </div>
+                 </div>
+                 <div className="input-group">
+                    <input type="text" placeholder="Home Address" value={address} onChange={(e) => setAddress(e.target.value)} required />
+                 </div>
+             </>
           )}
           <div className="input-group">
             <input  
