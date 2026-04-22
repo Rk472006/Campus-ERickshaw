@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useSocket } from '../context/SocketContext';
 
@@ -40,11 +40,34 @@ function LocationMarker({ pickup, setPickup, dropoff, setDropoff, selectingMode 
     );
 }
 
+// Helper to center map
+function MoveMap({ center }) {
+    const map = useMap();
+    useEffect(() => {
+        if (center) map.setView(center, 15);
+    }, [center, map]);
+    return null;
+}
+
 export default function AppMap({ pickup, setPickup, dropoff, setDropoff, selectingMode, activeRide, assignedDriver }) {
-    // Default campus coordinates (example: generic center)
-    const [center] = useState([28.6139, 77.2090]); 
+    const [center, setCenter] = useState([28.6139, 77.2090]); 
     const { socket } = useSocket();
     const [drivers, setDrivers] = useState({});
+
+    // Fetch user current location
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const coords = [pos.coords.latitude, pos.coords.longitude];
+                    setCenter(coords);
+                    if (!pickup) setPickup({ lat: coords[0], lng: coords[1] });
+                },
+                (err) => console.error("Geolocation error:", err),
+                { enableHighAccuracy: true }
+            );
+        }
+    }, []);
 
     // Listen to real-time driver locations
     useEffect(() => {
@@ -84,6 +107,7 @@ export default function AppMap({ pickup, setPickup, dropoff, setDropoff, selecti
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <MoveMap center={center} />
             <LocationMarker 
                pickup={pickup} setPickup={setPickup} 
                dropoff={dropoff} setDropoff={setDropoff} 
