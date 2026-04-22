@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { User as UserIcon, Save, X } from 'lucide-react';
 
 export default function Profile({ user, onClose }) {
-  const [profileData, setProfileData] = useState({ name: '', email: '', vehicle: '' });
+  const [profileData, setProfileData] = useState({ 
+    name: '', 
+    email: '', 
+    dob: '',
+    vehicleNumber: '',
+    licenseId: '',
+    address: '',
+    phone: ''
+  });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
@@ -13,7 +21,11 @@ export default function Profile({ user, onClose }) {
          setProfileData({
              name: data.name || '',
              email: data.email || user.email,
-             vehicle: data.campusId || '' // using campusId field to store vehicle temporarily for schema simplicity, or we should update schema
+             dob: data.dob || '',
+             vehicleNumber: data.vehicleNumber || '',
+             licenseId: data.licenseId || '',
+             address: data.address || '',
+             phone: data.phone || ''
          });
          setLoading(false);
       })
@@ -30,7 +42,11 @@ export default function Profile({ user, onClose }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
               name: profileData.name,
-              campusId: profileData.vehicle // Using campusId field as generic metadata for the driver's vehicle
+              dob: profileData.dob,
+              vehicleNumber: profileData.vehicleNumber,
+              licenseId: profileData.licenseId,
+              address: profileData.address,
+              phone: profileData.phone
           })
       })
       .then(res => res.json())
@@ -62,9 +78,31 @@ export default function Profile({ user, onClose }) {
                         <input type="text" value={profileData.name} onChange={e => setProfileData({...profileData, name: e.target.value})} />
                     </div>
 
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div className="input-group">
+                            <label style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Date of Birth</label>
+                            <input type="date" value={profileData.dob} onChange={e => setProfileData({...profileData, dob: e.target.value})} />
+                        </div>
+                        <div className="input-group">
+                            <label style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Phone Number</label>
+                            <input type="text" value={profileData.phone} onChange={e => setProfileData({...profileData, phone: e.target.value})} />
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div className="input-group">
+                            <label style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Vehicle Number</label>
+                            <input type="text" value={profileData.vehicleNumber} onChange={e => setProfileData({...profileData, vehicleNumber: e.target.value})} />
+                        </div>
+                        <div className="input-group">
+                            <label style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '8px', display: 'block' }}>License ID Number</label>
+                            <input type="text" value={profileData.licenseId} onChange={e => setProfileData({...profileData, licenseId: e.target.value})} />
+                        </div>
+                    </div>
+
                     <div className="input-group" style={{ marginBottom: '24px' }}>
-                        <label style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Registered Vehicle Details</label>
-                        <input type="text" value={profileData.vehicle} onChange={e => setProfileData({...profileData, vehicle: e.target.value})} placeholder="e.g., Green Rickshaw HR-26" />
+                        <label style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Home Address</label>
+                        <input type="text" value={profileData.address} onChange={e => setProfileData({...profileData, address: e.target.value})} />
                     </div>
 
                     <button type="submit" className="btn-primary" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>

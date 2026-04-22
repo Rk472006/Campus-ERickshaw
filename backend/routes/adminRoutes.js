@@ -31,7 +31,7 @@ router.put('/drivers/:id/suspend', async (req, res) => {
 router.post('/register-driver', async (req, res) => {
     try {
         const adminAuth = require('firebase-admin').auth();
-        const { email, password, name, phone, license, vehiclePlate } = req.body;
+        const { email, password, name, phone, dob, vehicleNumber, licenseId, address } = req.body;
 
         // 1. Create purely via Backend Admin SDK (Client won't be logged out)
         const userRecord = await adminAuth.createUser({
@@ -49,7 +49,11 @@ router.post('/register-driver', async (req, res) => {
             email: email,
             name: name,
             role: 'DRIVER',
-            campusId: vehiclePlate, // repurposing campusId for vehiclePlate/license
+            phone: phone,
+            dob: dob,
+            vehicleNumber: vehicleNumber,
+            licenseId: licenseId,
+            address: address,
             isActive: true
         });
 

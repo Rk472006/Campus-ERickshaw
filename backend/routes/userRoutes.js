@@ -43,10 +43,10 @@ router.get('/:uid', async (req, res) => {
 // Update passenger/driver profile details
 router.put('/:uid', async (req, res) => {
   try {
-    const { name, campusId } = req.body;
+    const { name, campusId, dob, vehicleNumber, licenseId, address, phone } = req.body;
     const user = await User.findOneAndUpdate(
        { firebaseUid: req.params.uid },
-       { name, campusId },
+       { name, campusId, dob, vehicleNumber, licenseId, address, phone },
        { new: true }
     );
     res.status(200).json(user);

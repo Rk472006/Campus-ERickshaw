@@ -3,7 +3,16 @@ import React, { useEffect, useState } from 'react';
 export default function Drivers({ suspensionsOnly = false }) {
     const [drivers, setDrivers] = useState([]);
     const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '', license: '', vehiclePlate: '' });
+    const [formData, setFormData] = useState({ 
+        name: '', 
+        email: '', 
+        password: '', 
+        phone: '', 
+        dob: '', 
+        vehicleNumber: '', 
+        licenseId: '', 
+        address: '' 
+    });
 
     const fetchDrivers = () => {
         fetch('http://localhost:5000/api/admin/drivers')
@@ -47,7 +56,16 @@ export default function Drivers({ suspensionsOnly = false }) {
             if (res.ok) {
                 alert("Driver successfully registered!");
                 setShowForm(false);
-                setFormData({ name: '', email: '', password: '', phone: '', license: '', vehiclePlate: '' });
+                setFormData({ 
+                    name: '', 
+                    email: '', 
+                    password: '', 
+                    phone: '', 
+                    dob: '', 
+                    vehicleNumber: '', 
+                    licenseId: '', 
+                    address: '' 
+                });
                 fetchDrivers();
             } else {
                 const data = await res.json();
@@ -77,8 +95,10 @@ export default function Drivers({ suspensionsOnly = false }) {
                         <input type="email" placeholder="Email Address" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
                         <input type="password" placeholder="Password (min 6 chars)" required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
                         <input type="text" placeholder="Phone Number" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
-                        <input type="text" placeholder="License Details" required value={formData.license} onChange={e => setFormData({...formData, license: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
-                        <input type="text" placeholder="Vehicle Details / Plate" required value={formData.vehiclePlate} onChange={e => setFormData({...formData, vehiclePlate: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
+                        <input type="date" placeholder="Date of Birth" required value={formData.dob} onChange={e => setFormData({...formData, dob: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
+                        <input type="text" placeholder="Vehicle Number" required value={formData.vehicleNumber} onChange={e => setFormData({...formData, vehicleNumber: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
+                        <input type="text" placeholder="License ID Number" required value={formData.licenseId} onChange={e => setFormData({...formData, licenseId: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff' }} />
+                        <input type="text" placeholder="Address" required value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} style={{ padding: '12px', borderRadius: '8px', background: 'var(--bg-color)', border: '1px solid var(--panel-border)', color: '#fff', gridColumn: 'span 2' }} />
                         <button type="submit" style={{ gridColumn: 'span 2', background: '#fff', color: '#000', padding: '12px', borderRadius: '8px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}>Complete Registration</button>
                     </form>
                 </div>

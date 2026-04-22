@@ -23,6 +23,11 @@ const UserSchema = new mongoose.Schema({
   campusId: {
     type: String, // e.g. student roll number
   },
+  dob: { type: String },
+  vehicleNumber: { type: String },
+  licenseId: { type: String },
+  address: { type: String },
+  phone: { type: String },
   isActive: {
     type: Boolean,
     default: true,

@@ -4,7 +4,9 @@ import NativeMap from './NativeMap';
 import * as Location from 'expo-location';
 import { SocketProvider, useSocket } from './src/SocketContext';
 import Login from './src/Login';
+import Profile from './src/Profile';
 import { auth, onAuthStateChanged, signOut } from './firebaseConfig';
+import { User as UserIcon } from 'lucide-react-native';
 
 function DriverDashboard({ user }) {
   const { socket, isConnected } = useSocket();
@@ -15,6 +17,7 @@ function DriverDashboard({ user }) {
   const [activeRide, setActiveRide] = useState(null);
   const [driverState, setDriverState] = useState('IDLE');
   const [routePolyline, setRoutePolyline] = useState([]);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -204,7 +207,14 @@ function DriverDashboard({ user }) {
       <View style={styles.header}>
         <View>
           <Text style={styles.headerText}>Driver Status: {isConnected ? 'Connected' : 'Offline'}</Text>
-          <TouchableOpacity onPress={handleLogout}><Text style={{ color: '#ff4757', marginTop: 4 }}>Logout</Text></TouchableOpacity>
+          <View style={{ flexDirection: 'row', gap: 15 }}>
+            <TouchableOpacity onPress={() => setShowProfile(true)}>
+              <Text style={{ color: '#00df82', marginTop: 4 }}>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={{ color: '#ff4757', marginTop: 4 }}>Logout</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.toggleContainer}>
           <Text style={{ marginRight: 10, color: '#fff', fontWeight: 'bold' }}>{isOnline ? 'ONLINE' : 'OFFLINE'}</Text>
@@ -216,6 +226,8 @@ function DriverDashboard({ user }) {
           />
         </View>
       </View>
+
+      {showProfile && <Profile user={user} onClose={() => setShowProfile(false)} />}
 
       {/* Map Segment */}
       {location ? (
