@@ -277,11 +277,25 @@ useEffect(() => {
         {rideStatus === 'ASSIGNED' && assignedDriver && (
           <div style={{ padding: '10px 0' }}>
              <h3 style={{ color: 'var(--primary)', marginBottom: '16px' }}>Driver is en route!</h3>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#ffcc00' }}></div>
-                <div>
-                  <h4 style={{ fontSize: '18px' }}>{assignedDriver.name}</h4>
-                  <p style={{ color: 'var(--text-muted)' }}>Vehicle: {assignedDriver.vehicle}</p>
+             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+                   <div style={{ width: '50px', height: '50px', borderRadius: '25px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <UserIcon color="#000" size={30} />
+                   </div>
+                   <div style={{ flex: 1 }}>
+                      <h4 style={{ fontSize: '18px', fontWeight: 'bold' }}>{assignedDriver.name}</h4>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Phone: {assignedDriver.phone}</p>
+                   </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                   <div>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>VEHICLE NUMBER</p>
+                      <p style={{ fontWeight: 'bold' }}>{assignedDriver.vehicleNumber || 'N/A'}</p>
+                   </div>
+                   <div>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>LICENSE ID</p>
+                      <p style={{ fontWeight: 'bold' }}>{assignedDriver.licenseId || 'N/A'}</p>
+                   </div>
                 </div>
              </div>
              <p style={{ marginTop: '16px', textAlign: 'center', color: 'var(--text-muted)' }}>Sit tight. Your driver will mark the ride complete upon arrival.</p>

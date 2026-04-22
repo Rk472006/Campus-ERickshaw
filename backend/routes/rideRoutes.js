@@ -46,7 +46,8 @@ router.put('/:id/status', async (req, res) => {
          driverId = driver._id;
          driverInfo = { 
              name: driver.name, 
-             vehicle: driver.campusId, // mapping campusId to vehicle/license
+             vehicleNumber: driver.vehicleNumber,
+             licenseId: driver.licenseId,
              phone: driver.phone || 'N/A',
              firebaseUid: driver.firebaseUid // Crucial for tracking matching
          };
@@ -87,7 +88,7 @@ router.get('/history/:uid', async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const query = user.role === 'DRIVER' ? { driverId: user._id } : { passengerId: user._id };
-        const rides = await Ride.find(query).populate('passengerId', 'name').populate('driverId', 'name campusId').sort({ createdAt: -1 });
+        const rides = await Ride.find(query).populate('passengerId', 'name').populate('driverId', 'name vehicleNumber licenseId').sort({ createdAt: -1 });
         
         res.json(rides);
     } catch(err) {
